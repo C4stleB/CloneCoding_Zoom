@@ -9,6 +9,5 @@ app.use("/public", express.static(__dirname + "/public"));
 app.get("/", (req, res) => res.render("home"));
 app.get("/*", (req, res) => res.redirect("/"));
 
-const handleListen = () => console.log(`Listening on http://localhost:3000`);
-app.listen(3000, handleListen);
-
+const handleListen = () => console.log(`Listening on http://localhost:4000`);
+app.listen(4000, handleListen);
