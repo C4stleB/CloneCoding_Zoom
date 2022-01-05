@@ -9,13 +9,13 @@
   "license": "MIT",
   "scripts": {
     "dev": "CHOKIDAR_USEPOLLING=true nodemon",
-    "start": "node src/server.js"
+    "start": "nodemon"
   },
   "homepage": "https://github.com/C4stleB/CloneCoding_Zoom#readme",
   "devDependencies": {
-    "nodemon": "^2.0.12"
   },
   "dependencies": {
+    "nodemon": "^2.0.12",
     "@babel/cli": "^7.14.8",
     "@babel/core": "^7.15.0",
     "@babel/node": "^7.14.9",
