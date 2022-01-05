@@ -68,7 +68,7 @@ async function getMedia(deviceId) {
 
     if (!deviceId) {
       // mute default
-      myStream //
+      myStream
         .getAudioTracks()
         .forEach((track) => (track.enabled = false));
 
@@ -80,7 +80,7 @@ async function getMedia(deviceId) {
 }
 
 function handleMuteClick() {
-  myStream //
+  myStream
     .getAudioTracks()
     .forEach((track) => (track.enabled = !track.enabled));
   if (muted) {
@@ -95,7 +95,7 @@ function handleMuteClick() {
 }
 
 function handleCameraClick() {
-  myStream //
+  myStream
     .getVideoTracks()
     .forEach((track) => (track.enabled = !track.enabled));
   if (cameraOff) {
