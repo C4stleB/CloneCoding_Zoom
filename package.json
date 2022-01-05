@@ -12,16 +12,15 @@
     "start": "nodemon"
   },
   "homepage": "https://github.com/C4stleB/CloneCoding_Zoom#readme",
-  "devDependencies": {
-  },
   "dependencies": {
-    "nodemon": "^2.0.12",
     "@babel/cli": "^7.14.8",
     "@babel/core": "^7.15.0",
     "@babel/node": "^7.14.9",
     "@babel/preset-env": "^7.15.0",
     "@socket.io/admin-ui": "^0.2.0",
+    "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "nodemon": "^2.0.12",
     "pug": "^3.0.2",
     "socket.io": "^4.4.0"
   }

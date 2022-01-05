@@ -1,7 +1,10 @@
 import express from "express";
 // import WebSocket from "ws";
+import dotenv from "dotenv";
 import SocketIO from "socket.io";
 import http from "http";
+
+dotenv.config();
 
 const app = express();
 
@@ -125,7 +128,7 @@ wsServer.on("connection", (socket) => {
   });
 });
 
-// const handleListen = () => console.log(`✅ Listening on http://localhost:3000`);
-// httpServer.listen(3000, handleListen);
-const handleListen = () => console.log(`✅ Listening on https://peaceful-castle-82888.herokuapp.com`);
-httpServer.listen(443, handleListen);
+
+const PORT = process.env.PORT || 3000;
+const handleListen = () => console.log(`Listening on: http://localhost:${PORT}`);
+httpServer.listen(PORT, handleListen);
