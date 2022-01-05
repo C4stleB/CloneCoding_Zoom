@@ -63,7 +63,6 @@ async function getMedia(deviceId) {
       deviceId ? cameraConstraints : initialConstraints
     );
 
-    // stream을 mute하는 것이 아니라 HTML video element를 mute한다.
     myFace.srcObject = myStream;
     myFace.muted = true;
 
