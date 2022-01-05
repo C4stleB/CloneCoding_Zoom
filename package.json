@@ -8,7 +8,8 @@
   },
   "license": "MIT",
   "scripts": {
-    "start": "CHOKIDAR_USEPOLLING=true nodemon"
+    "dev": "CHOKIDAR_USEPOLLING=true nodemon",
+    "start": "node src/server.js"
   },
   "homepage": "https://github.com/C4stleB/CloneCoding_Zoom#readme",
   "devDependencies": {
