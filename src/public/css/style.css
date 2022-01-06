@@ -6,7 +6,7 @@
   --header-background-color: #102027;
   --main-background-color: #546e7a;
   --chatBox-background-color: #37474f;
-  --controler-background-color: #29434e;
+  --controller-background-color: #29434e;
 
   --green-icon-color: #23c552;
   --red-icon-color: #f85031;
@@ -185,39 +185,39 @@ main {
   letter-spacing: 1px;
 }
 
-#streamBox #controlers {
+#streamBox #controllers {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
   height: 51px;
 
-  background-color: var(--controler-background-color);
+  background-color: var(--controller-background-color);
 
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-#streamBox #controlers #controlers__column {
+#streamBox #controllers #controllers__column {
   width: calc(100% / 3);
   height: 100%;
 
   display: flex;
   align-items: center;
 }
-#streamBox #controlers #controlers__column:first-child {
+#streamBox #controllers #controllers__column:first-child {
   padding-left: 20px;
 }
-#streamBox #controlers #controlers__column:nth-child(2) {
+#streamBox #controllers #controllers__column:nth-child(2) {
   justify-content: center;
 }
-#streamBox #controlers #controlers__column:last-child {
+#streamBox #controllers #controllers__column:last-child {
   justify-content: flex-end;
   padding-right: 20px;
 }
 
-#streamBox #controlers select {
+#streamBox #controllers select {
   padding: 7px 12px;
 
   color: whitesmoke;
@@ -227,7 +227,7 @@ main {
   box-shadow: var(--header-background-color) 0px 7px 29px 0px;
 }
 
-#streamBox #controlers #buttons button {
+#streamBox #controllers #buttons button {
   padding: 5px 15px;
 
   background: none;
@@ -237,31 +237,31 @@ main {
   transition: all 0.2s ease-in-out;
 }
 
-#streamBox #controlers #buttons button:hover {
+#streamBox #controllers #buttons button:hover {
   background-color: #c8cfdf;
 }
 
-#streamBox #controlers #buttons button:first-child {
+#streamBox #controllers #buttons button:first-child {
   margin-right: 10px;
 }
 
-#streamBox #controlers #buttons .unMuteIcon {
+#streamBox #controllers #buttons .unMuteIcon {
   color: var(--green-icon-color);
 }
 
-#streamBox #controlers #buttons .muteIcon {
+#streamBox #controllers #buttons .muteIcon {
   color: var(--red-icon-color);
 }
 
-#streamBox #controlers #buttons .cameraIcon {
+#streamBox #controllers #buttons .cameraIcon {
   color: var(--green-icon-color);
 }
 
-#streamBox #controlers #buttons .unCameraIcon {
+#streamBox #controllers #buttons .unCameraIcon {
   color: var(--red-icon-color);
 }
 
-#streamBox #controlers #leave {
+#streamBox #controllers #leave {
   padding: 5px 10px;
 
   font-size: 18px;
@@ -275,7 +275,7 @@ main {
   transition: all 0.2s ease-in-out;
 }
 
-#streamBox #controlers #leave:hover {
+#streamBox #controllers #leave:hover {
   background-color: var(--header-background-color);
   color: var(--red-icon-color);
 }

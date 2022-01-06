@@ -21,26 +21,26 @@ let cameraOff = false;
 unCameraIcon.classList.add(HIDDEN_CN);
 let roomName = "";
 let nickname = "";
-let peopleInRoom = 1;
+let userInRoom = 1;
 
 let pcObj = {
   // remoteSocketId: pc
 };
 
+let myPeerConnection;
+
 async function getCameras() {
   try {
     const devices = await navigator.mediaDevices.enumerateDevices();
     const cameras = devices.filter((device) => device.kind === "videoinput");
-    const currentCamera = myStream.getVideoTracks();
+    const currentCamera = myStream.getVideoTracks()[0];
     cameras.forEach((camera) => {
       const option = document.createElement("option");
       option.value = camera.deviceId;
       option.innerText = camera.label;
-
       if (currentCamera.label == camera.label) {
         option.selected = true;
       }
-
       camerasSelect.appendChild(option);
     });
   } catch (error) {
@@ -57,21 +57,18 @@ async function getMedia(deviceId) {
     audio: true,
     video: { deviceId: { exact: deviceId } },
   };
-
   try {
     myStream = await navigator.mediaDevices.getUserMedia(
       deviceId ? cameraConstraints : initialConstraints
     );
-
+    console.log(myStream);
     myFace.srcObject = myStream;
     myFace.muted = true;
-
     if (!deviceId) {
       // mute default
       myStream
         .getAudioTracks()
         .forEach((track) => (track.enabled = false));
-
       await getCameras();
     }
   } catch (error) {
@@ -134,21 +131,21 @@ camerasSelect.addEventListener("input", handleCameraChange);
 /////////////////////////////////// prototype
 // Screen Sharing
 
-let captureStream = null;
+// let captureStream = null;
 
-async function startCapture() {
-  try {
-    captureStream = await navigator.mediaDevices.getDisplayMedia({
-      video: true,
-      audio: true,
-    });
+// async function startCapture() {
+//   try {
+//     captureStream = await navigator.mediaDevices.getDisplayMedia({
+//       video: true,
+//       audio: true,
+//     });
 
-    const screenVideo = document.querySelector("#screen");
-    screenVideo.srcObject = captureStream;
-  } catch (error) {
-    console.error(error);
-  }
-}
+//     const screenVideo = document.querySelector("#screen");
+//     screenVideo.srcObject = captureStream;
+//   } catch (error) {
+//     console.error(error);
+//   }
+// }
 
 // Welcome Form (choose room)
 
@@ -222,7 +219,7 @@ function leaveRoom() {
   welcome.hidden = false;
 
   peerConnectionObjArr = [];
-  peopleInRoom = 1;
+  userInRoom = 1;
   nickname = "";
 
   myStream.getTracks().forEach((track) => track.stop());
@@ -234,11 +231,11 @@ function leaveRoom() {
   clearAllChat();
 }
 
-function removeVideo(leavedSocketId) {
+function removeVideo(leftSocketId) {
   const streams = document.querySelector("#streams");
   const streamArr = streams.querySelectorAll("div");
   streamArr.forEach((streamElement) => {
-    if (streamElement.id === leavedSocketId) {
+    if (streamElement.id === leftSocketId) {
       streams.removeChild(streamElement);
     }
   });
@@ -308,7 +305,7 @@ socket.on("accept_join", async (userObjArr) => {
     return;
   }
 
-  writeChat("Notice!", NOTICE_CN);
+  writeChat("[SYSTEM] Current User List", NOTICE_CN);
   for (let i = 0; i < length - 1; ++i) {
     try {
       const newPC = createConnection(
@@ -318,32 +315,36 @@ socket.on("accept_join", async (userObjArr) => {
       const offer = await newPC.createOffer();
       await newPC.setLocalDescription(offer);
       socket.emit("offer", offer, userObjArr[i].socketId, nickname);
-      writeChat(`__${userObjArr[i].nickname}__`, NOTICE_CN);
+      console.log("sent the offer");
+      writeChat(`${userObjArr[i].nickname}`, NOTICE_CN);
     } catch (err) {
       console.error(err);
     }
   }
-  writeChat("is in the room.", NOTICE_CN);
 });
 
 socket.on("offer", async (offer, remoteSocketId, remoteNickname) => {
   try {
     const newPC = createConnection(remoteSocketId, remoteNickname);
+    console.log("received the offer");
     await newPC.setRemoteDescription(offer);
     const answer = await newPC.createAnswer();
     await newPC.setLocalDescription(answer);
     socket.emit("answer", answer, remoteSocketId);
-    writeChat(`notice! __${remoteNickname}__ joined the room`, NOTICE_CN);
+    console.log("sent the answer");
+    writeChat(`[SYSTEM] ${remoteNickname} joined the room`, NOTICE_CN);
   } catch (err) {
     console.error(err);
   }
 });
 
 socket.on("answer", async (answer, remoteSocketId) => {
+  console.log("received the answer");
   await pcObj[remoteSocketId].setRemoteDescription(answer);
 });
 
 socket.on("ice", async (ice, remoteSocketId) => {
+  console.log("received candidate");
   await pcObj[remoteSocketId].addIceCandidate(ice);
 });
 
@@ -351,17 +352,16 @@ socket.on("chat", (message) => {
   writeChat(message);
 });
 
-socket.on("leave_room", (leavedSocketId, nickname) => {
-  removeVideo(leavedSocketId);
-  writeChat(`notice! ${nickname} leaved the room.`, NOTICE_CN);
-  --peopleInRoom;
+socket.on("leave_room", (leftSocketId, nickname) => {
+  removeVideo(leftSocketId);
+  writeChat(`[SYSTEM] ${nickname} left the room.`, NOTICE_CN);
+  --userInRoom;
   sortStreams();
 });
 
 // RTC code
-
 function createConnection(remoteSocketId, remoteNickname) {
-  const myPeerConnection = new RTCPeerConnection({
+  myPeerConnection = new RTCPeerConnection({
     iceServers: [
       {
         urls: [
@@ -369,7 +369,8 @@ function createConnection(remoteSocketId, remoteNickname) {
           "stun:stun1.l.google.com:19302",
           "stun:stun2.l.google.com:19302",
           "stun:stun3.l.google.com:19302",
-          "stun:stun4.l.google.com:19302"
+          "stun:stun4.l.google.com:19302",
+          "stun:stun.services.mozilla.com"
         ],
       },
     ],
@@ -384,25 +385,27 @@ function createConnection(remoteSocketId, remoteNickname) {
   //   "iceconnectionstatechange",
   //   handleConnectionStateChange
   // );
-  myStream //
+  myStream
     .getTracks()
     .forEach((track) => myPeerConnection.addTrack(track, myStream));
 
   pcObj[remoteSocketId] = myPeerConnection;
 
-  ++peopleInRoom;
-  sortStreams();
+  ++userInRoom;
+  // sortStreams();
   return myPeerConnection;
 }
 
 function handleIce(event, remoteSocketId) {
   if (event.candidate) {
     socket.emit("ice", event.candidate, remoteSocketId);
+    console.log("sent candidate");
   }
 }
 
 function handleAddStream(event, remoteSocketId, remoteNickname) {
   const peerStream = event.stream;
+  console.log(event.stream);
   paintPeerFace(peerStream, remoteSocketId, remoteNickname);
 }
 
@@ -419,17 +422,18 @@ function paintPeerFace(peerStream, id, remoteNickname) {
   const nicknameContainer = document.createElement("h3");
   nicknameContainer.id = "userNickname";
   nicknameContainer.innerText = remoteNickname;
-
+  
   div.appendChild(video);
   div.appendChild(nicknameContainer);
   streams.appendChild(div);
+
   sortStreams();
 }
 
 function sortStreams() {
   const streams = document.querySelector("#streams");
   const streamArr = streams.querySelectorAll("div");
-  streamArr.forEach((stream) => (stream.className = `people${peopleInRoom}`));
+  streamArr.forEach((stream) => (stream.className = `people${userInRoom}`));
 }
 /*
 function handleConnectionStateChange(event) {

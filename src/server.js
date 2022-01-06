@@ -1,5 +1,4 @@
 import express from "express";
-// import WebSocket from "ws";
 import dotenv from "dotenv";
 import SocketIO from "socket.io";
 import http from "http";
@@ -10,13 +9,10 @@ const app = express();
 
 app.set("view engine", "pug");
 app.set("views", __dirname + "/views");
-
 app.use("/public", express.static(__dirname + "/public"));
-
 app.get("/", (req, res) => {
   res.render("home");
 });
-
 app.get("/*", (req, res) => {
   res.redirect("/");
 });
